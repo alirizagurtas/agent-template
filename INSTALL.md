@@ -14,7 +14,7 @@ Argüman vermeden çalıştırıldığında betik, bir terminal mevcutsa hedef d
 paket adını ve proje adını sorar:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/alirizagurtas/agent-template/main/install.sh | bash
+curl -fsSL "https://raw.githubusercontent.com/alirizagurtas/agent-template/main/install.sh?cache_bust=$(date +%s)" | bash
 ```
 
 ## Otomasyona uygun kurulum
@@ -22,7 +22,7 @@ curl -fsSL https://raw.githubusercontent.com/alirizagurtas/agent-template/main/i
 CI veya terminal olmayan ortamlarda üç değeri argüman olarak ver:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/alirizagurtas/agent-template/main/install.sh | bash -s -- my-project my_package my-project-name
+curl -fsSL "https://raw.githubusercontent.com/alirizagurtas/agent-template/main/install.sh?cache_bust=$(date +%s)" | bash -s -- my-project my_package my-project-name
 ```
 
 Sırasıyla hedef dizin, geçerli bir küçük harfli Python paket adı ve dağıtım

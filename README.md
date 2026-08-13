@@ -28,7 +28,7 @@ olmalıdır.
 Yeni projeyi tek komutla oluştur:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/alirizagurtas/agent-template/main/install.sh | bash -s -- my-project
+curl -fsSL "https://raw.githubusercontent.com/alirizagurtas/agent-template/main/install.sh?cache_bust=$(date +%s)" | bash -s -- my-project
 ```
 
 Bu komut `my-project/` dizinini ve varsayılan `agent_project` Python paketini
@@ -36,7 +36,7 @@ oluşturur. Hedef dizini, paket adını ve dağıtım/proje adını birlikte ver
 için en fazla üç argüman kullanabilirsin:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/alirizagurtas/agent-template/main/install.sh | bash -s -- my-project my_package my-project-name
+curl -fsSL "https://raw.githubusercontent.com/alirizagurtas/agent-template/main/install.sh?cache_bust=$(date +%s)" | bash -s -- my-project my_package my-project-name
 ```
 
 Kurulum betiği yer tutucuları günceller, yeni bir Git deposu başlatır ve `uv`

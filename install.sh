@@ -6,7 +6,7 @@ set -euo pipefail
 DEFAULT_DESTINATION="agent-project"
 DEFAULT_PACKAGE="agent_project"
 REPOSITORY="alirizagurtas/agent-template"
-TEMPLATE_ARCHIVE_URL="${TEMPLATE_ARCHIVE_URL:-https://github.com/${REPOSITORY}/archive/refs/heads/main.tar.gz}"
+TEMPLATE_ARCHIVE_URL="${TEMPLATE_ARCHIVE_URL:-https://github.com/${REPOSITORY}/archive/refs/heads/main.tar.gz?cache_bust=$(date +%s)}"
 
 prompt_value() {
     local variable_name="$1"
