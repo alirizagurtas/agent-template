@@ -1,0 +1,8 @@
+version: 1
+package: your_package
+paths:
+  source: src/your_package
+  unit_tests: tests/unit
+  integration_tests: tests/integration
+  scripts: scripts
+domains: {}

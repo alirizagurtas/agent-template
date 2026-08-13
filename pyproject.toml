@@ -1,0 +1,126 @@
+[project]
+name            = "your-project-name"
+version         = "0.1.0"
+description     = ""
+readme          = "README.md"
+requires-python = ">=3.14"
+dependencies    = []
+
+[dependency-groups]
+dev = [
+    "basedpyright>=1.39.9",
+    "poethepoet>=0.48.0",
+    "pytest>=9.1.1",
+    "pytest-xdist>=3.8.0",
+    "pyyaml>=6.0.3",
+    "rich>=15.0.0",
+    "ruff>=0.16.0",
+]
+
+[build-system]
+requires      = ["uv_build>=0.11.32,<0.12.0"]
+build-backend = "uv_build"
+
+[tool.uv.build-backend]
+module-name = "your_package"
+
+[tool.ruff]
+target-version    = "py314"
+line-length       = 100
+force-exclude     = true
+respect-gitignore = true
+src               = ["src", "tests"]
+include           = ["pyproject.toml", "src/**/*.py", "tests/**/*.py", "scripts/**/*.py"]
+
+[tool.ruff.lint]
+select = [
+    "E",
+    "F",
+    "I",
+    "B",
+    "RUF",
+    "UP",
+    "ASYNC",
+    "BLE",
+    "S608",
+    "DTZ",
+    "PGH003",
+    "PGH004",
+    "TID",
+    "N",
+    "ARG",
+    "RET",
+    "SIM",
+    "PERF",
+    "C4",
+    "PIE",
+    "SLF",
+    "PLR0911",
+    "PLR0912",
+    "PLR2004",
+    "PLW0602",
+    "PLW0603",
+    "FBT001",
+    "FBT002",
+    "FBT003",
+    "TRY002",
+    "EM",
+]
+
+ignore = ["E111", "E114", "E117", "E501"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**/*.py" = ["PLR2004"]
+
+[tool.ruff.format]
+quote-style  = "double"
+indent-style = "space"
+line-ending  = "lf"
+
+[tool.basedpyright]
+venvPath         = "."
+venv             = ".venv"
+include          = ["src", "tests", "scripts"]
+exclude          = ["**/__pycache__", "**/.ruff_cache", ".venv", ".uv-cache", "build", "dist"]
+pythonVersion    = "3.14"
+pythonPlatform   = "Linux"
+typeCheckingMode = "strict"
+failOnWarnings   = true
+
+reportAny                    = "error"
+reportExplicitAny            = "error"
+reportInvalidCast            = "error"
+reportImplicitRelativeImport = "error"
+
+[tool.pytest.ini_options]
+minversion     = "9.0"
+testpaths      = ["tests"]
+pythonpath     = ["src"]
+addopts        = ["-ra", "--strict-config", "--strict-markers", "--import-mode=importlib", "--tb=short"]
+filterwarnings = ["error"]
+xfail_strict   = true
+markers        = ["integration: external systems or framework boundaries"]
+
+[tool.poe.tasks]
+lint         = "ruff check --fix ."
+lint-check   = "ruff check ."
+format       = "ruff format ."
+format-check = "ruff format --check ."
+
+typecheck = "basedpyright"
+
+test-target      = "pytest -q --tb=short --maxfail=3"
+test-unit        = "pytest -q -m 'not integration' --tb=short --maxfail=3"
+test-integration = "pytest -q -m integration -n auto --maxprocesses=4 --dist worksteal --tb=short --maxfail=3"
+test-profile     = "pytest --durations=20 --durations-min=0.1"
+test-failed      = "pytest -q --lf --tb=short --maxfail=3"
+
+sync-project-structure  = "python3 scripts/sync_project_structure.py --write"
+check-project-structure = "python3 scripts/sync_project_structure.py --check"
+run-harness             = "bash scripts/run_harness.sh"
+
+[tool.poe.tasks.check]
+sequence = ["lint-check", "format-check", "typecheck", "test-unit", "check-project-structure"]
+
+[tool.poe.tasks.test]
+sequence = ["test-unit", "test-integration"]
