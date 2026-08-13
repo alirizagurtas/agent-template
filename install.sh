@@ -66,6 +66,7 @@ mkdir -p "src/$package_name" tests/unit
 touch "src/$package_name/__init__.py"
 git init --quiet
 if command -v uv >/dev/null 2>&1; then
+    uv lock
     uv sync
     uv run --locked poe sync-project-structure
 fi
