@@ -37,8 +37,8 @@ replace_placeholders() {
     sed -i.bak \
         -e "s/your-project-name/${project_name}/g" \
         -e "s/your_package/${package_name}/g" \
-        pyproject.toml project_structure.yaml
-    rm -f pyproject.toml.bak project_structure.yaml.bak
+        pyproject.toml project_structure.yaml uv.lock
+    rm -f pyproject.toml.bak project_structure.yaml.bak uv.lock.bak
 }
 
 destination=""
