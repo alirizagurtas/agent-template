@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Bootstrap a project from agent-template.
+# Agent Template ile yeni proje oluşturur.
 
 set -euo pipefail
 
@@ -10,7 +10,7 @@ TEMPLATE_ARCHIVE_URL="${TEMPLATE_ARCHIVE_URL:-https://github.com/${REPOSITORY}/a
 
 prompt_value() {
     local variable_name="$1"
-    local question="$2"
+    local prompt="$2"
     local default_value="$3"
     local positional_value="${4:-}"
     local selected_value=""
@@ -18,7 +18,7 @@ prompt_value() {
     if [[ -n "$positional_value" ]]; then
         selected_value="$positional_value"
     elif [[ -r /dev/tty ]]; then
-        read -r -p "${question} [${default_value}]: " selected_value < /dev/tty
+        read -r -p "${prompt} [${default_value}]: " selected_value < /dev/tty
     fi
     printf -v "$variable_name" '%s' "${selected_value:-$default_value}"
 }
@@ -26,7 +26,7 @@ prompt_value() {
 validate_package() {
     local package_name="$1"
     if [[ ! "$package_name" =~ ^[a-z_][a-z0-9_]*$ ]]; then
-        echo "error: package name must be a lowercase Python identifier: $package_name" >&2
+        echo "hata: paket adı küçük harfli geçerli bir Python tanımlayıcısı olmalıdır: $package_name" >&2
         exit 1
     fi
 }
@@ -44,14 +44,14 @@ replace_placeholders() {
 destination=""
 package_name=""
 project_name=""
-prompt_value destination "Destination directory" "$DEFAULT_DESTINATION" "${DEST:-${1:-}}"
+prompt_value destination "Hedef dizin" "$DEFAULT_DESTINATION" "${DEST:-${1:-}}"
 if [[ -e "$destination" ]]; then
-    echo "error: destination already exists: $destination" >&2
+    echo "hata: hedef dizin zaten mevcut: $destination" >&2
     exit 1
 fi
-prompt_value package_name "Python package name" "$DEFAULT_PACKAGE" "${PACKAGE:-${2:-}}"
+prompt_value package_name "Python paket adı" "$DEFAULT_PACKAGE" "${PACKAGE:-${2:-}}"
 validate_package "$package_name"
-prompt_value project_name "Project name" "${package_name//_/-}" "${PROJECT_NAME:-${3:-}}"
+prompt_value project_name "Proje adı" "${package_name//_/-}" "${PROJECT_NAME:-${3:-}}"
 
 temporary_directory="$(mktemp -d)"
 trap 'rm -rf "$temporary_directory"' EXIT

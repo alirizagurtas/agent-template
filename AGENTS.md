@@ -1,70 +1,71 @@
 # AGENTS.md
 
-## Mandatory rules
+## Kesin kurallar
 
-1. Never use an f-string literal directly in `raise`. Assign the message to a
-   variable, then raise the project-specific exception.
-2. Never expose `Any` in a function signature, including test helpers. Narrow
-   untyped loader results at their boundary with `cast(object, ...)` and
-   `isinstance` checks.
-3. Before checking keys of an object-valued dictionary, cast it to
-   `dict[object, object]`. Do not inspect keys directly on an untyped mapping.
-4. Do not use `set().union(*generator)`. Initialize `set[T]` and call `update`
-   in a plain loop.
-5. Do not return `argparse.Namespace` or access its attributes without a
-   direct cast. Parse arguments into typed primitive values.
-6. Test scripts through a separate process; never dynamically import them with
-   `importlib.util`.
-7. In `src/` and `scripts/`, define every numeric comparison value as a
-   module-level `UPPER_SNAKE_CASE` constant, including `len()` comparisons.
-8. Keep every function at eight or fewer branches and six or fewer returns.
-   Extract named single-responsibility helpers before implementation.
-9. Keep imports standard-library, third-party, then local, alphabetized within
-   each group. Do not retain unused imports.
-10. Write separate tests for independent requirements. Do not combine more
-    than two unrelated scenarios in a single test.
-11. Boolean function parameters must be keyword-only. Never pass a positional
-    boolean.
-12. Raise a module-specific exception rather than a built-in general-purpose
-    exception.
-13. Never use bare `except` or `except Exception`. Catch concrete exception
-    types only.
+1. `raise` içinde doğrudan f-string kullanma. Mesajı önce bir değişkene ata,
+   ardından proje-özel exception'ı fırlat.
+2. Test yardımcıları dahil hiçbir fonksiyon imzasında `Any` taşıma. Belirsiz
+   yükleyici dönüşlerini sınırda `cast(object, ...)` ve `isinstance` ile daralt.
+3. `object` tipindeki bir sözlüğün anahtarlarını kontrol etmeden önce değeri
+   `dict[object, object]` tipine cast et.
+4. `set().union(*generator)` kullanma. `set[T]` oluştur ve düz bir döngüde
+   `update` çağır.
+5. `argparse.Namespace` döndürme veya attribute'larına cast etmeden erişme.
+   Argümanları typed ilkel değerlere dönüştür.
+6. Script'leri `importlib.util` ile dinamik yükleme; her zaman ayrı süreçte
+   çalıştırarak test et.
+7. `src/` ve `scripts/` altında, `len()` karşılaştırmaları dahil her sayısal
+   karşılaştırma değerini modül seviyesinde `UPPER_SNAKE_CASE` sabit yap.
+8. Fonksiyon başına en fazla sekiz dallanma ve altı `return` kullan. Mantığı
+   önceden isimlendirilmiş tek sorumluluklu yardımcı fonksiyonlara böl.
+9. Importları stdlib, third-party ve local olarak; her grup içinde alfabetik
+   sırala. Kullanılmayan import bırakma.
+10. Bağımsız gereksinimler için ayrı test yaz. İkiden fazla ilgisiz senaryoyu
+    tek testte birleştirme.
+11. Boolean parametreleri keyword-only yap. Pozisyonel boolean gönderme.
+12. Yerleşik genel amaçlı exception yerine modüle ait özel bir exception sınıfı
+    kullan.
+13. Çıplak `except` veya `except Exception` kullanma; yalnız somut hata
+    türlerini yakala.
 
-## General rules
+## Genel kurallar
 
-- Do not hardcode project, package, or source/test paths. Read them from
-  `project_structure.yaml`.
-- Keep changes within the requested implementation and test files. Do not
-  modify dependencies, tooling, or unrelated files unless explicitly asked.
-- Keep repository content in English, using UTF-8 file I/O.
+- Proje, paket veya kaynak/test yollarını hardcode etme; bunları
+  `project_structure.yaml` dosyasından oku.
+- Değişikliği istenen implementasyon ve test kapsamıyla sınırlı tut.
+  Açıkça istenmedikçe bağımlılıkları, araçlandırmayı veya ilgisiz dosyaları
+  değiştirme.
+- Dosya G/Ç'sinde UTF-8 kullan ve depo içeriğini İngilizce yaz; yalnız açıkça
+  Türkçe yerelleştirme istenen kullanıcı dokümantasyonu istisnadır.
 
-## Validation order
+## Doğrulama sırası
 
-After changing Python code, run these commands in order:
+Python kodunu değiştirdikten sonra şu komutları sırayla çalıştır:
 
 ```bash
-uv run --locked ruff check --fix <changed-files>
-uv run --locked ruff format <changed-files>
+uv run --locked ruff check --fix <değişen-dosyalar>
+uv run --locked ruff format <değişen-dosyalar>
 uv run --locked poe test-target <path-or-node-id>
 uv run --locked poe check
 ```
 
-Run `uv run --locked poe test-integration` only when the change affects an
-integration boundary. Do not alter the default `poe check` workflow.
+`uv run --locked poe test-integration` komutunu yalnız değişiklik bir
+entegrasyon sınırını etkilediğinde çalıştır. Varsayılan `poe check` akışını
+değiştirme.
 
-## Project structure index
+## Proje yapısı indeksi
 
-`project_structure.yaml` is the source of truth for a domain's path, tests,
-and direct domain dependencies. Read it before scanning the repository for
-those facts. It does not replace reading source code when behavior or APIs are
-needed.
+`project_structure.yaml`, bir domain'in yolunu, testlerini ve doğrudan domain
+bağımlılıklarını gösteren kaynak gerçektir. Bu bilgiler için depoyu taramadan
+önce indeksi oku. Davranış veya API gerektiğinde ilgili kaynak kodunu okumayı
+ihmal etme.
 
-When source domains, indexed tests, or inter-domain imports change, run:
+Kaynak domain'leri, indekslenen testler veya domain importları değiştiğinde:
 
 ```bash
 uv run --locked poe sync-project-structure
 ```
 
-Run it before the final quality gate. Never edit `domains` by hand; the sync
-script owns that field. The `version`, `package`, and `paths` fields remain
-manually maintained configuration.
+Bu komutu son kalite kapısından önce çalıştır. `domains` alanını elle
+düzenleme; bu alan yalnız sync betiğinin sorumluluğundadır. `version`,
+`package` ve `paths` alanları ise elle yönetilen yapılandırmadır.
